@@ -1,0 +1,32 @@
+{
+  "title": "MARL Graph Topology",
+  "nodes": [
+    {"id": "env_grid", "label": "Cellular Env", "group": "env", "priority": 2, "x": 0.0, "y": 1.0, "z": 0.8},
+    {"id": "env_field", "label": "Static/Dynamic Fields", "group": "env", "priority": 3, "x": 0.5, "y": 1.4, "z": 1.0},
+    {"id": "sage", "label": "GraphSAGE", "group": "gnn", "priority": 4, "x": 1.5, "y": 2.2, "z": 1.8},
+    {"id": "gat", "label": "GAT / VGAE", "group": "gnn", "priority": 2, "x": 1.8, "y": 2.8, "z": 1.6},
+    {"id": "qmix", "label": "QMIX / QPLEX", "group": "marl", "priority": 4, "x": 3.0, "y": 2.6, "z": 2.2},
+    {"id": "mappo", "label": "MAPPO", "group": "marl", "priority": 4, "x": 3.2, "y": 3.0, "z": 2.4},
+    {"id": "credit", "label": "Credit Assignment", "group": "marl", "priority": 5, "x": 3.6, "y": 2.1, "z": 2.0},
+    {"id": "dynamic", "label": "Temporal Graph", "group": "dynamic", "priority": 4, "x": 4.5, "y": 3.3, "z": 2.7},
+    {"id": "stability", "label": "Topology Stability", "group": "dynamic", "priority": 3, "x": 4.8, "y": 2.5, "z": 2.9},
+    {"id": "distill", "label": "LLM Distiller", "group": "llm", "priority": 3, "x": 6.0, "y": 2.6, "z": 3.3},
+    {"id": "world", "label": "World Model", "group": "llm", "priority": 4, "x": 6.3, "y": 3.1, "z": 3.6},
+    {"id": "deploy", "label": "RLlib / AnyLogic", "group": "deploy", "priority": 3, "x": 7.5, "y": 2.8, "z": 4.2}
+  ],
+  "edges": [
+    {"source": "env_grid", "target": "env_field", "relation": "state extraction"},
+    {"source": "env_field", "target": "sage", "relation": "neighborhood encoding"},
+    {"source": "env_field", "target": "gat", "relation": "attention baseline"},
+    {"source": "sage", "target": "qmix", "relation": "latent state to mixing network"},
+    {"source": "sage", "target": "mappo", "relation": "shared encoder for actor-critic"},
+    {"source": "qmix", "target": "credit", "relation": "decentralized execution"},
+    {"source": "mappo", "target": "credit", "relation": "centralized critic"},
+    {"source": "credit", "target": "dynamic", "relation": "policy under changing edges"},
+    {"source": "dynamic", "target": "stability", "relation": "temporal smoothing"},
+    {"source": "stability", "target": "distill", "relation": "stable trajectory summary"},
+    {"source": "dynamic", "target": "world", "relation": "graph state forecasting"},
+    {"source": "distill", "target": "deploy", "relation": "teacher-student interface"},
+    {"source": "world", "target": "deploy", "relation": "simulator integration"}
+  ]
+}
